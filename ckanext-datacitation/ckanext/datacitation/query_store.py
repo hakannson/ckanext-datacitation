@@ -1,8 +1,8 @@
-from ckanext.datastore.backend.postgres import get_write_engine
 from sqlalchemy import Column, BIGINT,DateTime,TEXT
-
+from ckanext.datastore.backend.postgres import get_write_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
 
 Base=declarative_base()
 
@@ -34,9 +34,6 @@ class QueryStore:
 
 
     def store_query(self, exec_timestamp, query, query_hash, resultset_checksum,resource_id):
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
-
         q = session.query(Query).filter(Query.query == query,
                                         Query.query_hash == query_hash).first()
 
@@ -56,11 +53,9 @@ class QueryStore:
 
 
     def retrieve_query(self, pid):
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
-        return session.query(Query).filter(Query.id == pid).first()
+        result=session.query(Query).filter(Query.id == pid).first()
+        return result
 
-    def retrieve_all_entries(self):
-        Session =sessionmaker(bind=self.engine)
-        session=Session()
-        return session.query(Query).all()
+    def retrive_last_entry(self):
+        result = session.query(Query).order_by(Query.id.desc()).first()
+        return result

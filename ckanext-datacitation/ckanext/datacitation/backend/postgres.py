@@ -6,7 +6,7 @@ from sqlalchemy import func
 from psycopg2.extras import DateTimeTZRange
 from datetime import datetime
 from ckanext.datacitation.postgresdb_controller import refine_results
-
+from ckanext.datacitation.helpers import initiliaze_pid
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -16,9 +16,7 @@ log = logging.getLogger(__name__)
 QUERY_STORE = QueryStore()
 
 
-def create_op_type_trigger(table, table_history):
-    engine = get_write_engine()
-    connection = engine.connect()
+def create_op_type_trigger(table, table_history,connection):
     connection.execute(
         u'''CREATE OR REPLACE FUNCTION add_operation_type() RETURNS trigger AS $$
         BEGIN
@@ -39,9 +37,7 @@ def create_op_type_trigger(table, table_history):
     )
 
 
-def create_versioning_trigger(data_dict):
-    engine = get_write_engine()
-    connection = engine.connect()
+def create_versioning_trigger(data_dict,connection):
     connection.execute(
         u'''CREATE TRIGGER {trigger}
             BEFORE INSERT OR UPDATE OR DELETE ON {table}
@@ -52,11 +48,11 @@ def create_versioning_trigger(data_dict):
             table_history=identifier(data_dict['resource_id'] + '_history')))
 
 
-def create_history_table(data_dict):
+
+def create_history_table(data_dict,engine):
     columns = u", ".join([u'{0} {1}'.format(
         identifier(f['id']), f['type']) for f in data_dict['fields']])
 
-    engine = get_write_engine()
     engine.execute(
         u' CREATE TABLE IF NOT EXISTS "{name}"({columns});'.format(
             name=data_dict['resource_id'],
@@ -110,7 +106,6 @@ def find_updated_data(diff,new_record,connection,table):
                 updated_ids.append(row['_id'])
             else:
                 new_diff.append(dict)
-
     return new_diff,updated_ids
 
 
@@ -166,7 +161,6 @@ def delete_items(deleted_data,table,connection):
         delete_sql=u'''DELETE FROM {table} WHERE _id={condition};'''.format(table=identifier(table),condition=row['_id'])
         connection.execute(delete_sql)
 
-
 def is_query_needed(query):
     if 'DISTINCT' in query:
         return False
@@ -182,10 +176,11 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
         self.engine = get_write_engine()
 
     def create(self, context, data_dict):
+        connection = self.engine.connect()
         if super(VersionedDatastorePostgresqlBackend, self).resource_exists(data_dict['resource_id']):
             if not data_dict.get('records'):
                 return
-            connection = self.engine.connect()
+
             context['connection']=connection
             fields = _get_fields(context['connection'], data_dict['resource_id'])
             field_names = _pluck('id', fields)
@@ -232,6 +227,8 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
             insert_dict['records']= data_to_insert
 
+            connection.close()
+
             return super(VersionedDatastorePostgresqlBackend, self).create(context,insert_dict)
 
             #update_table(changed_row_ids,columns,new_record,connection,data_dict['resource_id'])
@@ -271,10 +268,12 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
                 "fields":fields_of_history_table,
                 "resource_id":data_dict['resource_id']+'_history'
             }
-            create_history_table(history_data_dict)
+            create_history_table(history_data_dict,self.engine)
             result=super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
-            create_versioning_trigger(data_dict)
-            create_op_type_trigger(identifier(data_dict['resource_id']),identifier(data_dict['resource_id']+'_history'))
+            create_versioning_trigger(data_dict,connection)
+            create_op_type_trigger(identifier(data_dict['resource_id']),identifier(data_dict['resource_id']+'_history'),connection)
+
+            connection.close()
             return result
 
     def delete(self, context, data_dict):
@@ -302,6 +301,11 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
         if is_query_needed(query):
             result = connection.execute(query)
-            QUERY_STORE.store_query(func.now(), query, hash_query(query), hash_query_result(result), data_dict_copy['resource_id'])
+            pid=QUERY_STORE.store_query(func.now(), query, hash_query(query), hash_query_result(result), data_dict_copy['resource_id'])
+            initiliaze_pid(pid)
+            print '====PID====='
+            print pid
+
+        connection.close()
 
         return super(VersionedDatastorePostgresqlBackend, self).search(context,data_dict)

@@ -1,0 +1,13 @@
+{% ckan_extends %}
+
+{% block resource_content %}
+{{ super() }}
+
+<div class="citation-area">
+   <h2>Citation Text</h2>
+    <p>PID: {{h.show_citation_info()['pid']}} </p>
+    <p>Resolve URL: {{h.show_citation_info()['resolve_url']}} </p>
+    <p>CKAN Resource ID: {{h.show_citation_info()['resource_id']}} </p>
+</div>
+
+{% endblock %}
