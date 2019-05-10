@@ -9,9 +9,6 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 def refine_results(results,column_names):
-    """ Refine some search results. """
-    # something here, maybe a request for search results
-
     data = []
     for row in results:
         data.append(row_to_dict(row, column_names))

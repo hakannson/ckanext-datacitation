@@ -1,7 +1,6 @@
 from ckanext.datastore.writer import csv_writer, json_writer, xml_writer
 import logging
 from ckan.lib.base import BaseController,h,render,response,abort
-from ckan.controllers.package import PackageController
 from ckan.logic import get_action
 log=logging.getLogger(__name__)
 
@@ -37,18 +36,6 @@ def history_dump_to(pid, output, fmt, options):
 
             log.debug("writing done: {0}".format(records))
 
-
-
-'''class CitationInfoController(PackageController):
-
-    def find_citation_text(self,id,resource_id):
-        result = get_action('show_citation_info')(None, {})
-        print result
-        return render('package/resource_read.html', extra_vars={
-            'pid': result['pid'],
-            'resolve_url': result['resolve_url'],
-            'resource_id': result['resource_id']
-        })'''
 
 class QueryStoreController(BaseController):
 

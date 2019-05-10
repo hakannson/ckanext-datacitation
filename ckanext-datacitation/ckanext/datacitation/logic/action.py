@@ -27,20 +27,3 @@ def querystore_resolve(context, data_dict):
     log.debug('querystore_resolve result: {0}'.format(result))
 
     return result
-
-
-
-def show_citation_info(context,data_dict):
-    qs=QueryStore()
-    query=qs.retrive_last_entry()
-
-    print 'YEESKA==='
-    site_url = config.get('ckan.site_url', None)
-
-    result={
-        'pid': query.id,
-        'resource_id': query.resource_id,
-        'resolve_url': site_url+'/querystore/view_query?id='+str(query.id)
-    }
-    print result
-    return result

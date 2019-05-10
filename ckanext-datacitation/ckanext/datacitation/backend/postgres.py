@@ -8,6 +8,10 @@ from datetime import datetime
 from ckanext.datacitation.postgresdb_controller import refine_results
 from ckanext.datacitation.helpers import initiliaze_pid
 import sys
+import pandas as pd
+
+
+import unicodedata
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -170,6 +174,10 @@ def is_query_needed(query):
     else:
         return True
 
+
+def report_diff(x):
+    return x[0] if x[1] == x[0] else '{0} --> {1}'.format(*x)
+
 class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
     def __init__(self):
@@ -187,55 +195,89 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
             sql_columns = ", ".join(
                 identifier(name) for name in field_names)
 
+            sql_columns=sql_columns.replace(', "sys_period"','')
+
 
 
             select=u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
             rs = connection.execute(select)
-            old_record = refine_results(rs, rs.keys())
+            old_record = pd.DataFrame(refine_results(rs, rs.keys()))
             rs_copy=connection.execute(select)
-            old_record_copy=exclude_fields(refine_results(rs_copy, rs_copy.keys()))
-            new_record = data_dict['records']
-
-            diff=find_diff(new_record,old_record_copy)
-
-            print 'DIFF'
-            print str(len(diff))
-            print str(diff)
-
-            diff,updated_ids=find_updated_data(diff,connection,data_dict['resource_id'])
-
-            print 'NEW_DIFF_AFTER_UPDATE'
-            print str(len(diff))
-            print str(diff)
+            old_record_copy=pd.DataFrame(exclude_fields(refine_results(rs_copy, rs_copy.keys())))
+            new_record = pd.DataFrame(data_dict['records'])
 
 
-            data_to_delete, diff =find_deleted_data(diff,old_record_copy)
+            '''full_set.drop_duplicates(keep='first',inplace=False)
+            full_set.reset_index(drop=True,inplace=True)
 
-            print 'NEW_DIFF_AFTER_DELETE'
-            print str(len(diff))
-            print str(diff)
+            print 'FULL_SET'
+            print full_set
 
-            print 'data_to_delete'
-            print str(data_to_delete)
+            records=full_set.T.to_dict().values()
+            print 'Records'
+            print records'''
 
-            data_to_insert=find_data_to_insert(diff, old_record_copy)
+            '''sql_columns=unicodedata.normalize('NFKD',sql_columns).encode('ascii','ignore')
+            sql_columns=sorted(sql_columns.split(', '))'''
 
-            delete_items(data_to_delete,data_dict['resource_id'],connection)
+            sql_columns=['email','first_name','gender','ip_address','last_name']
+           # print 'SQL_COLUMSN'
+            #print sql_columns
 
-            insert_dict=data_dict
+
+            old_record_copy['version'] = 'old'
+            new_record['version'] = 'new'
 
 
-            insert_dict['records']= data_to_insert
+            full_set = pd.concat([old_record_copy, new_record], axis=0)
 
-            connection.close()
+            changes = full_set.drop_duplicates(subset=sql_columns, keep='last')
+            dupe_names = changes.set_index('email').index.get_duplicates()
 
-            return super(VersionedDatastorePostgresqlBackend, self).create(context,insert_dict)
+            'DUPE_NAMES'
+            print dupe_names
 
-            #update_table(changed_row_ids,columns,new_record,connection,data_dict['resource_id'])
+            dupes = changes[changes.isin(dupe_names)]
 
-            #data_dict['records']=new_record
 
-            #return super(VersionedDatastorePostgresqlBackend, self).create(context,data_dict)
+            change_new = dupes[(dupes['version'] == 'new')]
+            change_old = dupes[(dupes['version'] == 'old')]
+
+
+            change_new = change_new.drop(['version'], axis=1)
+            change_old = change_old.drop(['version'], axis=1)
+
+
+            change_new.set_index('email', inplace=True)
+            change_old.set_index('email', inplace=True)
+            change_new.reset_index(drop=True,inplace=True)
+            change_old.reset_index(drop=True, inplace=True)
+
+            diff_panel = pd.Panel(dict(df1=change_old, df2=change_new))
+            diff_output = diff_panel.apply(report_diff, axis=0)
+
+            changes['duplicate'] = changes.isin(dupe_names)
+            removed_names = changes[(changes['duplicate'] == False) & (changes['version'] == 'old')]
+            #removed_names.set_index('email', inplace=True)
+
+            new_name_set = full_set.drop_duplicates(subset=sql_columns)
+
+            new_name_set['duplicate'] = new_name_set.isin(dupe_names)
+
+            added_names = new_name_set[(new_name_set['duplicate'] == False) & (new_name_set['version'] == 'new')]
+            #added_names.set_index('email', inplace=True)
+
+            df = pd.concat([diff_output, removed_names, added_names], keys=('changed', 'removed', 'added'),sort=True)
+            df.reset_index(drop=True, inplace=True)
+
+            print '==DIFFF========='
+            print df
+
+            records=df.T.to_dict().values()
+            print 'Records'
+            print records
+
+            return super(VersionedDatastorePostgresqlBackend, self).create(context,data_dict)
 
 
         else:
@@ -302,9 +344,9 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
         if is_query_needed(query):
             result = connection.execute(query)
             pid=QUERY_STORE.store_query(func.now(), query, hash_query(query), hash_query_result(result), data_dict_copy['resource_id'])
+            #the first query that is saved is useless
+            QUERY_STORE.delete(1)
             initiliaze_pid(pid)
-            print '====PID====='
-            print pid
 
         connection.close()
 

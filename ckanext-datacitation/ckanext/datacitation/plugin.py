@@ -47,10 +47,6 @@ class DatacitationPlugin(plugins.SingletonPlugin):
                   controller='ckanext.datacitation.controller:QueryStoreController',
                   action='dump_history_result_set')
 
-        '''map.connect('citationinfo.show','/dataset/{id}/resource/{resource_id}',
-                    controller='ckanext.datacitation.controller:CitationInfoController',
-                    action='find_citation_text')'''
-
         return map
 
 
@@ -63,7 +59,5 @@ class DatacitationPlugin(plugins.SingletonPlugin):
         }
 
         return actions
-
-''','show_citation_info': show_citation_info'''
 
 

@@ -56,6 +56,7 @@ class QueryStore:
         result=session.query(Query).filter(Query.id == pid).first()
         return result
 
-    def retrive_last_entry(self):
-        result = session.query(Query).order_by(Query.id.desc()).first()
-        return result
+    def delete(self,pid):
+        session.query(Query).filter(Query.id == pid).delete()
+        session.commit()
+
