@@ -48,7 +48,8 @@ class QueryStoreController(BaseController):
             return render('versioneddatastore/query_view.html', extra_vars={'query': result['query'],
                                                                     'result_set': result['result_set'],
                                                                     'count': len(result['result_set']),
-                                                                    'projection': result['column_names']})
+                                                                    'projection': result['column_names'],
+                                                                    'resource_id':result['resource_id']})
         else:
             abort(404,'The given PID does not exist')
 

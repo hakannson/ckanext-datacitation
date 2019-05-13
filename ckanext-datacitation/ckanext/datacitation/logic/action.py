@@ -22,7 +22,7 @@ def querystore_resolve(context, data_dict):
 
     log.debug('querystore_resolve parameters {0}'.format([pid, skip, limit, records_format]))
 
-    result = controller.retrieve_stored_query(pid,records_format)
+    result = controller.querystore_resolve(pid, records_format)
 
     log.debug('querystore_resolve result: {0}'.format(result))
 

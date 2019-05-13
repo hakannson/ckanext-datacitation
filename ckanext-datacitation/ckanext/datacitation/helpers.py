@@ -20,3 +20,18 @@ def show_citation_info():
 def initiliaze_pid(new_pid):
     global pid
     pid=new_pid
+
+
+
+def refine_results(results,column_names):
+    data = []
+    for row in results:
+        data.append(row_to_dict(row, column_names))
+    return data
+
+def row_to_dict(row, column_names):
+    d = {}
+    for column in column_names:
+        d[column] = str(getattr(row, column))
+
+    return d

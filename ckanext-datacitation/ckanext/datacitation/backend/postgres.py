@@ -5,8 +5,7 @@ from ckanext.datacitation.query_store import QueryStore
 from sqlalchemy import func
 from psycopg2.extras import DateTimeTZRange
 from datetime import datetime
-from ckanext.datacitation.postgresdb_controller import refine_results
-from ckanext.datacitation.helpers import initiliaze_pid
+from ckanext.datacitation.helpers import initiliaze_pid,refine_results
 import sys
 import pandas as pd
 
@@ -63,6 +62,32 @@ def create_history_table(data_dict,engine):
             columns=columns
         )
     )
+
+def postgres_querystore_resolve(query):
+    engine = get_write_engine()
+    connection = engine.connect()
+    if query:
+        if 'WHERE' in query.query:
+            where = u'''WHERE (lower(sys_period) <='{exec_timestamp}') AND (('{exec_timestamp}' < upper(sys_period)) OR upper(sys_period) IS NULL) AND'''.format(
+                exec_timestamp=query.exec_timestamp)
+            history_query = (query.query.replace(query.resource_id, query.resource_id + '_history')).replace('WHERE',
+                                                                                                             where)
+            select = u'''{query}
+                           UNION {history_query}'''.format(query=query.query.replace('WHERE', where),
+                                                           history_query=history_query)
+        else:
+            where = u'''WHERE (lower(sys_period) <='{exec_timestamp}') AND (('{exec_timestamp}' < upper(sys_period)) OR upper(sys_period) IS NULL)'''.format(
+                exec_timestamp=query.exec_timestamp)
+            history_query = (query.query.replace(query.resource_id, query.resource_id + '_history')) + ' ' + where
+            select = u'''{query}
+                                           UNION {history_query}'''.format(query=query.query + ' ' + where,
+                                                                           history_query=history_query)
+            print select
+
+        result = connection.execute(select)
+        return result
+    else:
+        return None
 
 
 def find_diff(new_record, old_record_copy):
@@ -207,16 +232,6 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
             new_record = pd.DataFrame(data_dict['records'])
 
 
-            '''full_set.drop_duplicates(keep='first',inplace=False)
-            full_set.reset_index(drop=True,inplace=True)
-
-            print 'FULL_SET'
-            print full_set
-
-            records=full_set.T.to_dict().values()
-            print 'Records'
-            print records'''
-
             '''sql_columns=unicodedata.normalize('NFKD',sql_columns).encode('ascii','ignore')
             sql_columns=sorted(sql_columns.split(', '))'''
 
@@ -224,56 +239,58 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
            # print 'SQL_COLUMSN'
             #print sql_columns
 
-
             old_record_copy['version'] = 'old'
             new_record['version'] = 'new'
 
-
-            full_set = pd.concat([old_record_copy, new_record], axis=0)
+            full_set = pd.concat([old_record_copy, new_record], ignore_index=True)
 
             changes = full_set.drop_duplicates(subset=sql_columns, keep='last')
-            dupe_names = changes.set_index('email').index.get_duplicates()
 
-            'DUPE_NAMES'
+            dupe_names = changes.set_index(sql_columns[0]).index.get_duplicates()
+
+            print 'DUPE_NAMES'
             print dupe_names
 
-            dupes = changes[changes.isin(dupe_names)]
+            dupes = changes[changes[sql_columns[0]].isin(dupe_names)]
 
+            print 'DUPES'
+            print dupes
 
             change_new = dupes[(dupes['version'] == 'new')]
             change_old = dupes[(dupes['version'] == 'old')]
+
+            print 'CHANGE_NEW'
+            print change_new
+
+            print 'CHANGE_OLD'
+            print change_old
 
 
             change_new = change_new.drop(['version'], axis=1)
             change_old = change_old.drop(['version'], axis=1)
 
-
-            change_new.set_index('email', inplace=True)
-            change_old.set_index('email', inplace=True)
-            change_new.reset_index(drop=True,inplace=True)
-            change_old.reset_index(drop=True, inplace=True)
+            change_new.set_index(sql_columns[0], inplace=True)
+            change_old.set_index(sql_columns[0], inplace=True)
 
             diff_panel = pd.Panel(dict(df1=change_old, df2=change_new))
             diff_output = diff_panel.apply(report_diff, axis=0)
 
-            changes['duplicate'] = changes.isin(dupe_names)
+            changes['duplicate'] = changes[sql_columns[0]].isin(dupe_names)
             removed_names = changes[(changes['duplicate'] == False) & (changes['version'] == 'old')]
-            #removed_names.set_index('email', inplace=True)
+            removed_names.set_index(sql_columns[0], inplace=True)
 
             new_name_set = full_set.drop_duplicates(subset=sql_columns)
 
-            new_name_set['duplicate'] = new_name_set.isin(dupe_names)
+            new_name_set['duplicate'] = new_name_set[sql_columns[0]].isin(dupe_names)
 
             added_names = new_name_set[(new_name_set['duplicate'] == False) & (new_name_set['version'] == 'new')]
-            #added_names.set_index('email', inplace=True)
+            added_names.set_index(sql_columns[0], inplace=True)
 
-            df = pd.concat([diff_output, removed_names, added_names], keys=('changed', 'removed', 'added'),sort=True)
-            df.reset_index(drop=True, inplace=True)
-
-            print '==DIFFF========='
+            df = pd.concat([diff_output, removed_names, added_names], keys=('changed', 'removed', 'added'))
+            print '==DF=='
             print df
 
-            records=df.T.to_dict().values()
+            records = df.T.to_dict().values()
             print 'Records'
             print records
 
@@ -344,8 +361,6 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
         if is_query_needed(query):
             result = connection.execute(query)
             pid=QUERY_STORE.store_query(func.now(), query, hash_query(query), hash_query_result(result), data_dict_copy['resource_id'])
-            #the first query that is saved is useless
-            QUERY_STORE.delete(1)
             initiliaze_pid(pid)
 
         connection.close()
