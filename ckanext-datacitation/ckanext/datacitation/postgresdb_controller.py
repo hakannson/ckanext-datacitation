@@ -64,9 +64,11 @@ class PostgresDbController:
             fields_types,
             _get_field_info(context['connection'], query.resource_id),
             get_list(result_dictionary.get('fields'))))
+
         # do not show sys_period column because, it has only
         # a technical meaning
         result_dictionary['fields']=exclude_sys_period(result_dictionary['fields'])
+
         if records_format == 'objects':
             result_dictionary['result_set'] = list(result_dictionary['result_set'])
         elif records_format == 'csv':

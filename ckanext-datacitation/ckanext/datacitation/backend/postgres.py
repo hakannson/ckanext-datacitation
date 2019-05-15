@@ -283,7 +283,7 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
             new_name_set['duplicate'] = new_name_set[sql_columns[0]].isin(dupe_names)
 
-            added_names = new_name_set[(new_name_set['duplicate'] == False) & (new_name_set['version'] == 'new')]
+            added_names = new_name_set[(new_name_set['duplicate'] is False) & (new_name_set['version'] == 'new')]
             added_names.set_index(sql_columns[0], inplace=True)
 
             df = pd.concat([diff_output, removed_names, added_names], keys=('changed', 'removed', 'added'))

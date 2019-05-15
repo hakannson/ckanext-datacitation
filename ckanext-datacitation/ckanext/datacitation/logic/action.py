@@ -1,8 +1,5 @@
 import logging
 from ckanext.datacitation.postgresdb_controller import PostgresDbController
-from ckanext.datacitation.query_store import QueryStore
-from ckan.common import config
-
 log=logging.getLogger(__name__)
 
 controller = PostgresDbController()

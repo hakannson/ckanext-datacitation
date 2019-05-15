@@ -35,7 +35,7 @@ class QueryStore:
 
     def store_query(self, exec_timestamp, query, query_hash, resultset_checksum,resource_id):
         q = session.query(Query).filter(Query.query == query,
-                                        Query.query_hash == query_hash).first()
+                                        Query.resultset_checksum == resultset_checksum).first()
 
         if q:
             return q.id
