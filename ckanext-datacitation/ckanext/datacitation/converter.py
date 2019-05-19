@@ -16,6 +16,7 @@ def hash_query(query):
     return hex_dig
 
 
+
 def convert_to_sql_query(query_dict, data_dict):
     records_format = data_dict['records_format']
     where_clause, where_values = _where(query_dict['where'])
@@ -69,3 +70,5 @@ def replace_where_clause(where_clause, where_values):
     for value in where_values:
         replaced = replaced.replace("%s", "'" + value + "'", 1)
     return replaced
+
+

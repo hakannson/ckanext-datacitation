@@ -7,7 +7,7 @@ from psycopg2.extras import DateTimeTZRange
 from datetime import datetime
 from ckanext.datacitation.helpers import initiliaze_pid,refine_results
 import sys
-import pandas as pd
+import collections
 
 
 import unicodedata
@@ -203,6 +203,58 @@ def is_query_needed(query):
 def report_diff(x):
     return x[0] if x[1] == x[0] else '{0} --> {1}'.format(*x)
 
+def detect_and_delete_toDeleted_rows(data_dict, connection,new_record):
+    select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
+    rs = connection.execute(select)
+    old_record = refine_results(rs, rs.keys())
+
+    old_ids=[]
+    for dict in old_record:
+        id=dict.get('id',None)
+        old_ids.append(int(id))
+
+    new_ids=[]
+    for dict in new_record:
+        id=dict.get('id',None)
+        new_ids.append(id)
+
+    rows_to_delete=list(set(old_ids) - set(new_ids))
+    print 'ROWS_TO_DELETE'
+    print rows_to_delete
+    for id in rows_to_delete:
+        delete_sql=u'''DELETE FROM {table} WHERE id={id}'''.format(table=identifier(data_dict['resource_id']),id=id)
+        connection.execute(delete_sql)
+
+def detect_updated_rows(data_dict,connection,new_record):
+    select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
+    rs = connection.execute(select)
+    old_record = refine_results(rs, rs.keys())
+    for dict in old_record:
+        # exclude the fields that added after creation
+        del dict['_id']
+        del dict['_full_text']
+        del dict['sys_period']
+
+    new_record_unicoded=[]
+    for dict in new_record:
+        dict = {unicode(k): v.encode('utf-8') if isinstance(v,unicode)  else str(v) for k, v in dict.items()}
+        new_record_unicoded.append(dict)
+
+
+    updated_records=[]
+    for old_dict in old_record:
+        for new_dict in new_record_unicoded:
+            new_dict = collections.OrderedDict(sorted(new_dict.items()))
+            old_dict=collections.OrderedDict(sorted(old_dict.items()))
+            if int(new_dict.get('id',None)) == int(old_dict.get('id',None)):
+                if new_dict.values() !=old_dict.values():
+                    updated_records.append(new_dict)
+
+    return updated_records
+
+
+
+
 class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
     def __init__(self):
@@ -214,87 +266,12 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
             if not data_dict.get('records'):
                 return
 
-            context['connection']=connection
-            fields = _get_fields(context['connection'], data_dict['resource_id'])
-            field_names = _pluck('id', fields)
-            sql_columns = ", ".join(
-                identifier(name) for name in field_names)
+            detect_and_delete_toDeleted_rows(data_dict, connection,data_dict['records'])
 
-            sql_columns=sql_columns.replace(', "sys_period"','')
-
-
-
-            select=u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
-            rs = connection.execute(select)
-            old_record = pd.DataFrame(refine_results(rs, rs.keys()))
-            rs_copy=connection.execute(select)
-            old_record_copy=pd.DataFrame(exclude_fields(refine_results(rs_copy, rs_copy.keys())))
-            new_record = pd.DataFrame(data_dict['records'])
-
-
-            '''sql_columns=unicodedata.normalize('NFKD',sql_columns).encode('ascii','ignore')
-            sql_columns=sorted(sql_columns.split(', '))'''
-
-            sql_columns=['email','first_name','gender','ip_address','last_name']
-           # print 'SQL_COLUMSN'
-            #print sql_columns
-
-            old_record_copy['version'] = 'old'
-            new_record['version'] = 'new'
-
-            full_set = pd.concat([old_record_copy, new_record], ignore_index=True)
-
-            changes = full_set.drop_duplicates(subset=sql_columns, keep='last')
-
-            dupe_names = changes.set_index(sql_columns[0]).index.get_duplicates()
-
-            print 'DUPE_NAMES'
-            print dupe_names
-
-            dupes = changes[changes[sql_columns[0]].isin(dupe_names)]
-
-            print 'DUPES'
-            print dupes
-
-            change_new = dupes[(dupes['version'] == 'new')]
-            change_old = dupes[(dupes['version'] == 'old')]
-
-            print 'CHANGE_NEW'
-            print change_new
-
-            print 'CHANGE_OLD'
-            print change_old
-
-
-            change_new = change_new.drop(['version'], axis=1)
-            change_old = change_old.drop(['version'], axis=1)
-
-            change_new.set_index(sql_columns[0], inplace=True)
-            change_old.set_index(sql_columns[0], inplace=True)
-
-            diff_panel = pd.Panel(dict(df1=change_old, df2=change_new))
-            diff_output = diff_panel.apply(report_diff, axis=0)
-
-            changes['duplicate'] = changes[sql_columns[0]].isin(dupe_names)
-            removed_names = changes[(changes['duplicate'] == False) & (changes['version'] == 'old')]
-            removed_names.set_index(sql_columns[0], inplace=True)
-
-            new_name_set = full_set.drop_duplicates(subset=sql_columns)
-
-            new_name_set['duplicate'] = new_name_set[sql_columns[0]].isin(dupe_names)
-
-            added_names = new_name_set[(new_name_set['duplicate'] is False) & (new_name_set['version'] == 'new')]
-            added_names.set_index(sql_columns[0], inplace=True)
-
-            df = pd.concat([diff_output, removed_names, added_names], keys=('changed', 'removed', 'added'))
-            print '==DF=='
-            print df
-
-            records = df.T.to_dict().values()
-            print 'Records'
-            print records
-
-            return super(VersionedDatastorePostgresqlBackend, self).create(context,data_dict)
+            data_dict['method']='upsert'
+            data_dict['primary_key']='id'
+            data_dict['records']=detect_updated_rows(data_dict,connection,data_dict['records'])
+            return super(VersionedDatastorePostgresqlBackend, self).upsert(context,data_dict)
 
 
         else:
@@ -310,6 +287,8 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
             if records is not None:
                 for r in records:
                     r['sys_period']=DateTimeTZRange(datetime.now(),None)
+
+            data_dict['primary_key'] = 'id'
             data_dict['fields']=fields
             data_dict['records']=records
             datastore_fields = [
