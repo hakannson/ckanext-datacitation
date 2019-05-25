@@ -4,7 +4,7 @@ log=logging.getLogger(__name__)
 
 controller = PostgresDbController()
 
-def querystore_resolve(context, data_dict):
+def datacitation_querystore_resolve(context, data_dict):
 
     pid = data_dict.get('pid')
     skip = data_dict.get('offset', None)
@@ -24,3 +24,4 @@ def querystore_resolve(context, data_dict):
     log.debug('querystore_resolve result: {0}'.format(result))
 
     return result
+

@@ -2,7 +2,7 @@ from ckanext.datacitation.query_store import QueryStore
 from ckan.common import config
 
 pid=None
-def show_citation_info():
+def datacitation_show_citation_info():
     if pid:
         qs = QueryStore()
         query = qs.retrieve_query(pid)

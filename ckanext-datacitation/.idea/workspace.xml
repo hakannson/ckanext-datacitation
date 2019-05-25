@@ -2,15 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e47defeb-0112-4fac-9b31-4c07cc3534e4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/resource_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ckan" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ckanext-datacitation.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ckanext-datacitation.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ckanext/datacitation/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ckanext/datacitation/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/helpers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ckanext/datacitation/logic/action.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/logic/action.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ckanext/datacitation/plugin.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/plugin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ckanext/datacitation/query_store.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/query_store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ckanext/datacitation/templates/package/resource_read.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/templates/package/resource_read.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/citation_text.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/datacitation/tests/test_plugin.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/datacitation/tests/test_plugin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.ini" beforeDir="false" afterPath="$PROJECT_DIR$/test.ini" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,11 +20,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="157">
+              <caret line="45" column="32" lean-forward="true" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ckanext/datacitation/backend/postgres.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
-              <caret line="238" selection-start-line="238" selection-end-line="238" />
+            <state relative-caret-position="501">
+              <caret line="179" column="62" selection-start-line="179" selection-start-column="62" selection-end-line="179" selection-end-column="62" />
               <folding>
                 <element signature="e#0#148#0" expanded="true" />
               </folding>
@@ -33,34 +45,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/pandas/core/reshape/concat.py">
+        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/versioneddatastore/id_not_given.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="23" column="4" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/helpers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="4" column="25" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="10" column="41" selection-start-line="10" selection-start-column="41" selection-end-line="10" selection-end-column="41" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="30">
+              <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
             </state>
           </provider>
         </entry>
@@ -68,52 +56,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ckanext/datacitation/plugin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="48" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="351">
+              <caret line="43" column="41" selection-start-line="43" selection-start-column="41" selection-end-line="43" selection-end-column="41" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/logic/action.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="28" column="17" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/controller.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="64" selection-start-line="2" selection-start-column="64" selection-end-line="2" selection-end-column="64" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/package/resource_read.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="14" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ckanext/datacitation/query_store.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="855">
-              <caret line="60" column="24" selection-start-line="60" selection-start-column="24" selection-end-line="60" selection-end-column="24" />
-              <folding>
-                <element signature="e#0#51#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -124,14 +70,13 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>h</find>
       <find>dump_history_result_set</find>
       <find>0x7f6c923f5530</find>
       <find>_UPDATE</find>
@@ -161,6 +106,7 @@
       <find>action</find>
       <find>c</find>
       <find>resource_Read</find>
+      <find>You must add at least one data resource</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -179,21 +125,25 @@
         <option value="$PROJECT_DIR$/ckanext/datacitation/templates/package/resources.html" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/citation_text.html" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/logic/action.py" />
-        <option value="$PROJECT_DIR$/ckanext/datacitation/plugin.py" />
-        <option value="$PROJECT_DIR$/ckanext/datacitation/controller.py" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/templates/package/resource_read.html" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/helpers.py" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/query_store.py" />
+        <option value="$PROJECT_DIR$/ckanext/datacitation/tests/test_plugin.py" />
+        <option value="$PROJECT_DIR$/ckanext/datacitation/templates/home/layout1.html" />
+        <option value="$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/resource_form.html" />
+        <option value="$PROJECT_DIR$/ckanext/datacitation/controller.py" />
+        <option value="$PROJECT_DIR$/ckanext/datacitation/templates/versioneddatastore/id_not_given.html" />
+        <option value="$PROJECT_DIR$/ckanext/datacitation/plugin.py" />
         <option value="$PROJECT_DIR$/ckanext/datacitation/backend/postgres.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="193" />
-    <option name="y" value="491" />
-    <option name="width" value="1404" />
-    <option name="height" value="789" />
+    <option name="x" value="993" />
+    <option name="y" value="27" />
+    <option name="width" value="927" />
+    <option name="height" value="923" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -201,6 +151,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -231,7 +182,7 @@
               <item name="ckanext-datacitation" type="462c0819:PsiDirectoryNode" />
               <item name="ckanext" type="462c0819:PsiDirectoryNode" />
               <item name="datacitation" type="462c0819:PsiDirectoryNode" />
-              <item name="logic" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ckanext-datacitation" type="b2602c69:ProjectViewProjectNode" />
@@ -239,6 +190,16 @@
               <item name="ckanext" type="462c0819:PsiDirectoryNode" />
               <item name="datacitation" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ckanext-datacitation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ckanext-datacitation" type="462c0819:PsiDirectoryNode" />
+              <item name="ckanext" type="462c0819:PsiDirectoryNode" />
+              <item name="datacitation" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+              <item name="snippets" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ckanext-datacitation" type="b2602c69:ProjectViewProjectNode" />
@@ -248,11 +209,27 @@
               <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="package" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="ckanext-datacitation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ckanext-datacitation" type="462c0819:PsiDirectoryNode" />
+              <item name="ckanext" type="462c0819:PsiDirectoryNode" />
+              <item name="datacitation" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="package" type="462c0819:PsiDirectoryNode" />
+              <item name="snippets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ckanext-datacitation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ckanext-datacitation" type="462c0819:PsiDirectoryNode" />
+              <item name="ckanext" type="462c0819:PsiDirectoryNode" />
+              <item name="datacitation" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="versioneddatastore" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,6 +255,101 @@
       </list>
     </option>
   </component>
+  <component name="RunManager" selected="Python.postgresdb_controller">
+    <configuration name="postgres" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ckanext-datacitation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ckanext/datacitation/backend" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ckanext/datacitation/backend/postgres.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="postgresdb_controller" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ckanext-datacitation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ckanext/datacitation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_plugin.PluginTest.test_register_backends" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="ckanext-datacitation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ckanext/datacitation/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_plugin.PluginTest.test_register_backends&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_plugin.PluginTest.test_update_config" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="ckanext-datacitation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ckanext/datacitation/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_plugin.PluginTest.test_update_config&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests in test_plugin.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="ckanext-datacitation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ckanext/datacitation/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/ckanext/datacitation/tests/test_plugin.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.postgresdb_controller" />
+        <item itemvalue="Python.postgres" />
+        <item itemvalue="Python tests.Unittests for test_plugin.PluginTest.test_register_backends" />
+        <item itemvalue="Python tests.Unittests for test_plugin.PluginTest.test_update_config" />
+        <item itemvalue="Python tests.Unittests in test_plugin.py" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -291,22 +363,54 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_update_config - 2019.05.20 at 18h 49m 00s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_update_config" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_datasource - 2019.05.20 at 18h 49m 47s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_datasource" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_datasource - 2019.05.20 at 18h 54m 30s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_datasource" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_datasource - 2019.05.20 at 18h 55m 18s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_datasource" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_datasource - 2019.05.20 at 18h 57m 25s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_datasource" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_backends - 2019.05.20 at 18h 59m 17s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_backends" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_test_plugin_py - 2019.05.20 at 19h 06m 45s.xml">
+      <configuration name="Unittests in test_plugin.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_backends - 2019.05.20 at 19h 06m 53s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_backends" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_update_config - 2019.05.20 at 19h 06m 59s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_update_config" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_plugin_PluginTest_test_register_backends - 2019.05.20 at 19h 08m 00s.xml">
+      <configuration name="Unittests for test_plugin.PluginTest.test_register_backends" configurationId="tests" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <frame x="67" y="25" width="1853" height="925" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15956284" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.4600432" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.459799" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32914573" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32937366" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32937366" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32914573" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32937366" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -375,13 +479,7 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/ckanext/datacitation/datastore.py" />
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/plugins/toolkit.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="214" column="24" selection-start-line="214" selection-start-column="24" selection-end-line="214" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/plugins/toolkit.py" />
     <entry file="file://$PROJECT_DIR$/ckanext/datacitation/resource_controller.py" />
     <entry file="file://$USER_HOME$/.local/lib/python2.7/site-packages/sqlalchemy/orm/persistence.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -390,61 +488,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/lib/cli.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="1355" column="22" selection-start-line="1355" selection-start-column="22" selection-end-line="1355" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/lib/navl/dictization_functions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="280" column="4" selection-start-line="280" selection-start-column="4" selection-end-line="280" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/helpers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/plugin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1290">
-          <caret line="86" column="39" selection-start-line="86" selection-start-column="39" selection-end-line="86" selection-end-column="39" />
-          <folding>
-            <element signature="e#19#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/interfaces.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="149" column="6" selection-start-line="149" selection-start-column="6" selection-end-line="149" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/logic/action.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="84" column="7" selection-start-line="84" selection-start-column="7" selection-end-line="84" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/backend/postgres.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3105">
-          <caret line="246" column="4" selection-start-line="246" selection-start-column="4" selection-end-line="246" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/lib/cli.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/lib/navl/dictization_functions.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/helpers.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/plugin.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/interfaces.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/logic/action.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/backend/postgres.py" />
     <entry file="file://$PROJECT_DIR$/ckanext/datacitation/converter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -452,30 +503,148 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/tests/test_plugin.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/writer.py">
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/writer.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/lib/base.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/logic/action/get.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/model/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/plugins/interfaces.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/controllers/package.py" />
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/citation_text.html" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/pandas/core/indexes/base.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/pandas/core/reshape/concat.py" />
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pycharm/_jb_unittest_runner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="34" column="20" lean-forward="true" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
+        <state relative-caret-position="399">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/lib/base.py">
+    <entry file="file://$USER_HOME$/ckan/lib/default/src/ckanext-datacitation/ckanext-datacitation/ckanext/datacitation/tests/test_plugin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-89">
-          <caret line="96" column="4" selection-start-line="96" selection-start-column="4" selection-end-line="96" selection-end-column="4" />
+        <state relative-caret-position="90">
+          <caret line="6" column="36" lean-forward="true" selection-start-line="6" selection-start-column="36" selection-end-line="6" selection-end-column="36" />
           <folding>
-            <element signature="e#102#116#0" expanded="true" />
+            <element signature="e#0#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/logic/action/get.py">
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/tests/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/query_store.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="1061" column="15" selection-start-line="1061" selection-start-column="4" selection-end-line="1061" selection-end-column="15" />
+        <state relative-caret-position="435">
+          <caret line="29" column="6" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/logic/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckanext/datastore/interfaces.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2235">
+          <caret line="149" column="6" selection-start-line="149" selection-start-column="6" selection-end-line="149" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/logic/action.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckan/plugins/interfaces.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10560">
+          <caret line="705" column="47" selection-start-line="705" selection-start-column="4" selection-end-line="705" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckanext/datapusher/logic/action.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="25" column="10" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckanext/datapusher/interfaces.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="14" lean-forward="true" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/package/resource_read.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="2" lean-forward="true" selection-start-line="6" selection-start-column="2" selection-end-line="6" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckan/lib/helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="1079" column="4" selection-start-line="1079" selection-start-column="4" selection-end-line="1079" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/tests/test_plugin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="3" column="33" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/resource_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="45" column="32" lean-forward="true" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/home/snippets/pid_resolve_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="92" selection-start-line="8" selection-start-column="92" selection-end-line="8" selection-end-column="92" />
         </state>
       </provider>
     </entry>
@@ -486,125 +655,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/home/layout1.html">
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/controller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="7" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/model/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/plugins/interfaces.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="1035" column="6" selection-start-line="1035" selection-start-column="6" selection-end-line="1035" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/ckan/controllers/package.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-170">
-          <caret line="1079" column="21" selection-start-line="1079" selection-start-column="8" selection-end-line="1079" selection-end-column="21" />
+        <state relative-caret-position="277">
+          <caret line="67" column="45" selection-start-line="67" selection-start-column="27" selection-end-line="67" selection-end-column="45" />
           <folding>
-            <element signature="e#19#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/package/snippets/citation_text.html" />
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/home/snippets/pid_resolve_form.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="14" lean-forward="true" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/pandas/core/indexes/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-287">
-          <caret line="2108" column="8" selection-start-line="2108" selection-start-column="8" selection-end-line="2108" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/backend/postgres.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="238" selection-start-line="238" selection-end-line="238" />
-          <folding>
-            <element signature="e#0#148#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../local/lib/python2.7/dist-packages/pandas/core/reshape/concat.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="23" column="4" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/helpers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="4" column="25" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/postgresdb_controller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="10" column="41" selection-start-line="10" selection-start-column="41" selection-end-line="10" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
+            <element signature="e#0#72#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ckanext/datacitation/plugin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
+        <state relative-caret-position="351">
+          <caret line="43" column="41" selection-start-line="43" selection-start-column="41" selection-end-line="43" selection-end-column="41" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/logic/action.py">
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/home/layout1.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="28" column="17" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="105">
+          <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/controller.py">
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/versioneddatastore/id_not_given.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
-          <caret line="2" column="64" selection-start-line="2" selection-start-column="64" selection-end-line="2" selection-end-column="64" />
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/templates/package/resource_read.html">
+    <entry file="file://$PROJECT_DIR$/../../../../../../local/lib/python2.7/dist-packages/ckan/lib/base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="14" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
+        <state relative-caret-position="405">
+          <caret line="106" column="22" selection-start-line="106" selection-start-column="17" selection-end-line="106" selection-end-column="22" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/query_store.py">
+    <entry file="file://$PROJECT_DIR$/ckanext/datacitation/backend/postgres.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="855">
-          <caret line="60" column="24" selection-start-line="60" selection-start-column="24" selection-end-line="60" selection-end-column="24" />
+        <state relative-caret-position="501">
+          <caret line="179" column="62" selection-start-line="179" selection-start-column="62" selection-end-line="179" selection-end-column="62" />
           <folding>
-            <element signature="e#0#51#0" expanded="true" />
+            <element signature="e#0#148#0" expanded="true" />
           </folding>
         </state>
       </provider>

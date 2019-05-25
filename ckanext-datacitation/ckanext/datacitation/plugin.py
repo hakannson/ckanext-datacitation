@@ -2,9 +2,8 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckanext.datastore.interfaces import IDatastoreBackend
 from backend.postgres import VersionedDatastorePostgresqlBackend
-from ckanext.datacitation.logic.action import querystore_resolve
-from ckanext.datacitation.helpers import show_citation_info
-
+from ckanext.datacitation.logic.action import datacitation_querystore_resolve
+from ckanext.datacitation.helpers import datacitation_show_citation_info
 
 class DatacitationPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
@@ -13,12 +12,12 @@ class DatacitationPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.ITemplateHelpers)
 
+
     # IConfigurer
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'ckanext-datacitation')
-
 
     # IDatastoreBackend
     def register_backends(self):
@@ -28,11 +27,12 @@ class DatacitationPlugin(plugins.SingletonPlugin):
 
         }
 
+
     #ITemplateHelpers
     def get_helpers(self):
 
         return {
-            'show_citation_info':show_citation_info
+            'show_citation_info':datacitation_show_citation_info
         }
 
 
@@ -46,6 +46,9 @@ class DatacitationPlugin(plugins.SingletonPlugin):
         map.connect('querystore.dump', '/querystore/dump_history_result_set',
                   controller='ckanext.datacitation.controller:QueryStoreController',
                   action='dump_history_result_set')
+        '''map.connect('datastore.check_entry','/check_entry',
+                    controller='ckanext.datacitation.controller:DatastoreController',
+                    action='datacitation_check_entry')'''
 
         return map
 
@@ -54,10 +57,8 @@ class DatacitationPlugin(plugins.SingletonPlugin):
     # IActions
     def get_actions(self):
         actions = {
-            'querystore_resolve': querystore_resolve
+            'querystore_resolve': datacitation_querystore_resolve
 
         }
 
         return actions
-
-

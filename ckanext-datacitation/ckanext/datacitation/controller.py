@@ -4,6 +4,26 @@ from ckan.lib.base import BaseController,h,render,response,abort
 from ckan.logic import get_action
 log=logging.getLogger(__name__)
 
+import ckan.logic as logic
+import ckan.lib.helpers as h
+
+import ckan.lib.plugins
+
+import ckan.lib.render
+
+
+NotFound = logic.NotFound
+NotAuthorized = logic.NotAuthorized
+ValidationError = logic.ValidationError
+check_access = logic.check_access
+tuplize_dict = logic.tuplize_dict
+clean_dict = logic.clean_dict
+parse_params = logic.parse_params
+flatten_to_string_key = logic.flatten_to_string_key
+
+lookup_package_plugin = ckan.lib.plugins.lookup_package_plugin
+
+
 def history_dump_to(pid, output, fmt, options):
     if fmt == 'csv':
         writer_factory = csv_writer
@@ -80,3 +100,8 @@ class QueryStoreController(BaseController):
             options={u'bom': bom}
         )
 
+
+class DatastoreController(BaseController):
+
+    def datacitation_check_entry(self):
+       print '==TEST=='

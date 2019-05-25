@@ -8,9 +8,8 @@ from datetime import datetime
 from ckanext.datacitation.helpers import initiliaze_pid,refine_results
 import sys
 import collections
-
-
-import unicodedata
+from ckanext.datastore.backend import InvalidDataError
+import ckan.plugins.toolkit as toolkit
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -90,106 +89,6 @@ def postgres_querystore_resolve(query):
         return None
 
 
-def find_diff(new_record, old_record_copy):
-    diff = [i for i in old_record_copy + new_record if i not in old_record_copy or i not in new_record]
-    return diff
-
-
-def find_data_to_insert(diff, old_record):
-    data_to_insert=[]
-    for row in diff:
-        if row not in old_record:
-            data_to_insert.append(row)
-
-    return data_to_insert
-
-def find_deleted_data(diff,old_record):
-    deleted_data=[]
-    new_diff=[]
-    for row in diff:
-        if row in old_record:
-            deleted_data.append(row)
-        else:
-            new_diff.append(row)
-
-    return deleted_data,new_diff
-
-
-def find_updated_data(diff,new_record,connection,table):
-    new_diff=[]
-    updated_ids=[]
-    for dict in diff:
-        if dict not in new_record:
-            isFirst=True
-            sql_string=''
-            conditions = ''
-            for key, value in dict.iteritems():
-                if isFirst:
-                    conditions+=key+'=' + "'" + value + "'"
-                else:
-                    conditions+=' AND ' + key+'=' + "'" + value+"'"
-                isFirst=False
-            sql_string += u'''SELECT _id FROM {table} WHERE {conditions}'''.format(table=identifier(table),conditions=conditions)
-            row=connection.execute(sql_string).fetchone()
-            if row is not None:
-                updated_ids.append(row['_id'])
-            else:
-                new_diff.append(dict)
-    return new_diff,updated_ids
-
-
-def exclude_fields(old_record):
-    for row in old_record:
-        del row['_full_text']
-        del row['sys_period']
-        del row['_id']
-
-    return old_record
-
-
-
-def extract_column_names(fields):
-    columns=[]
-    for field in fields:
-        columns.append(field.get('id',None))
-
-    return columns
-
-
-
-def update_table(rows,columns,records,connection,table):
-    for id in rows:
-        sql_string = u''' UPDATE "{res_id}"
-                           SET ({columns}, "_full_text") = ({values}, NULL)
-                           WHERE _id = {id};
-                       '''.format(
-           res_id=table,
-           columns=u', '.join(
-               [identifier(field)
-                for field in columns]).replace('%', '%%'),
-           values=u', '.join(
-               ['%s' for _ in records]),
-          id=id)
-        print 'SQL_STRING'
-        print sql_string
-        connection.execute(sql_string)
-
-def delete_items(deleted_data,table,connection):
-    for dict in deleted_data:
-        isFirst=True
-        sql_string=''
-        conditions = ''
-        for key, value in dict.iteritems():
-            if isFirst:
-                conditions+=key+'=' + "'" + value + "'"
-            else:
-                conditions+=' AND ' + key+'=' + "'" + value+"'"
-            isFirst=False
-        sql_string += u'''SELECT _id FROM {table} WHERE {conditions}'''.format(table=identifier(table),conditions=conditions)
-        row=connection.execute(sql_string).fetchone()
-        delete_sql=u'''DELETE FROM {table} WHERE _id={condition};'''.format(table=identifier(table),condition=row['_id'])
-        connection.execute(delete_sql)
-
 def is_query_needed(query):
     if 'DISTINCT' in query:
         return False
@@ -199,9 +98,6 @@ def is_query_needed(query):
     else:
         return True
 
-
-def report_diff(x):
-    return x[0] if x[1] == x[0] else '{0} --> {1}'.format(*x)
 
 def detect_and_delete_toDeleted_rows(data_dict, connection,new_record):
     select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
@@ -253,6 +149,40 @@ def detect_updated_rows(data_dict,connection,new_record):
     return updated_records
 
 
+def id_field_exists(fields):
+    id_exist = False
+    for field in fields:
+        if field.get('id') == 'id':
+            id_exist = True
+    return id_exist
+
+def is_id_field_number(records):
+    for dict in records:
+        for key, value in dict.iteritems():
+            if key =='id':
+                try:
+                    int(value)
+                except ValueError:
+                    return False
+
+    return True
+
+def validate_data(data_dict):
+    fields = data_dict.get('fields', None)
+    id_exist=id_field_exists(fields)
+
+    if not id_exist:
+        raise InvalidDataError(
+            toolkit._("The data has no 'id' field!"))
+
+    if not is_id_field_number(data_dict.get('records',None)):
+        raise InvalidDataError(
+            toolkit._("'id' field accepts only numeric records!"))
+
+
+
+
+
 
 
 class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
@@ -266,6 +196,8 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
             if not data_dict.get('records'):
                 return
 
+            validate_data(data_dict)
+
             detect_and_delete_toDeleted_rows(data_dict, connection,data_dict['records'])
 
             data_dict['method']='upsert'
@@ -275,7 +207,9 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
 
         else:
+            validate_data(data_dict)
             fields=data_dict.get('fields',None)
+
             records=data_dict.get('records',None)
             fields.append(
                 {
