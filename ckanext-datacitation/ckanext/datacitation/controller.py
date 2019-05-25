@@ -99,9 +99,3 @@ class QueryStoreController(BaseController):
             fmt=format,
             options={u'bom': bom}
         )
-
-
-class DatastoreController(BaseController):
-
-    def datacitation_check_entry(self):
-       print '==TEST=='

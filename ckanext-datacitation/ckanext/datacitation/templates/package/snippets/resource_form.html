@@ -1,3 +1,11 @@
 {% ckan_extends %}
 
 {{ super() }}
+
+{% block basic_fields %}
+<div>
+    <i class="fa fa-info-circle" style="font-size:18px"> To use the versioned datastore functionality, the file must have an unique field!</i>
+</div>
+<h1></h1>
+{{ super() }}
+{% endblock %}

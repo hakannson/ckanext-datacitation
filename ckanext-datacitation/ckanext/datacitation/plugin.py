@@ -28,7 +28,7 @@ class DatacitationPlugin(plugins.SingletonPlugin):
         }
 
 
-    #ITemplateHelpers
+    # ITemplateHelpers
     def get_helpers(self):
 
         return {
@@ -36,7 +36,7 @@ class DatacitationPlugin(plugins.SingletonPlugin):
         }
 
 
-       #IRoutes
+    # IRoutes
     def before_map(self,map):
 
         map.connect('querystore.view', '/querystore/view_query',
@@ -46,10 +46,6 @@ class DatacitationPlugin(plugins.SingletonPlugin):
         map.connect('querystore.dump', '/querystore/dump_history_result_set',
                   controller='ckanext.datacitation.controller:QueryStoreController',
                   action='dump_history_result_set')
-        '''map.connect('datastore.check_entry','/check_entry',
-                    controller='ckanext.datacitation.controller:DatastoreController',
-                    action='datacitation_check_entry')'''
-
         return map
 
 

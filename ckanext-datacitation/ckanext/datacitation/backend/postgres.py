@@ -81,7 +81,6 @@ def postgres_querystore_resolve(query):
             select = u'''{query}
                                            UNION {history_query}'''.format(query=query.query + ' ' + where,
                                                                            history_query=history_query)
-            print select
 
         result = connection.execute(select)
         return result
@@ -99,29 +98,27 @@ def is_query_needed(query):
         return True
 
 
-def detect_and_delete_toDeleted_rows(data_dict, connection,new_record):
+def detect_and_delete_toDeleted_rows(data_dict, connection,new_record,primary_key):
     select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
     rs = connection.execute(select)
     old_record = refine_results(rs, rs.keys())
 
     old_ids=[]
     for dict in old_record:
-        id=dict.get('id',None)
+        id=dict.get(primary_key,None)
         old_ids.append(int(id))
 
     new_ids=[]
     for dict in new_record:
-        id=dict.get('id',None)
+        id=dict.get(primary_key,None)
         new_ids.append(id)
 
     rows_to_delete=list(set(old_ids) - set(new_ids))
-    print 'ROWS_TO_DELETE'
-    print rows_to_delete
     for id in rows_to_delete:
-        delete_sql=u'''DELETE FROM {table} WHERE id={id}'''.format(table=identifier(data_dict['resource_id']),id=id)
+        delete_sql=u'''DELETE FROM {table} WHERE {primary_key}={id}'''.format(table=identifier(data_dict['resource_id']),primary_key=identifier(primary_key),id=id)
         connection.execute(delete_sql)
 
-def detect_updated_rows(data_dict,connection,new_record):
+def detect_updated_rows(data_dict,connection,new_record,primary_key):
     select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
     rs = connection.execute(select)
     old_record = refine_results(rs, rs.keys())
@@ -142,45 +139,40 @@ def detect_updated_rows(data_dict,connection,new_record):
         for new_dict in new_record_unicoded:
             new_dict = collections.OrderedDict(sorted(new_dict.items()))
             old_dict=collections.OrderedDict(sorted(old_dict.items()))
-            if int(new_dict.get('id',None)) == int(old_dict.get('id',None)):
+            if int(new_dict.get(primary_key,None)) == int(old_dict.get(primary_key,None)):
                 if new_dict.values() !=old_dict.values():
                     updated_records.append(new_dict)
 
     return updated_records
 
 
-def id_field_exists(fields):
-    id_exist = False
-    for field in fields:
-        if field.get('id') == 'id':
-            id_exist = True
-    return id_exist
 
-def is_id_field_number(records):
+def find_primary_key(records):
+    numeric_fiels=[]
     for dict in records:
         for key, value in dict.iteritems():
-            if key =='id':
-                try:
+            try:
+                if value is not None:
                     int(value)
-                except ValueError:
-                    return False
+                    numeric_fiels.append(key)
+            except ValueError:
+                pass
 
-    return True
+    primary_key_candidates={}
+    for field in numeric_fiels:
+        values=[]
+        for dict in records:
+            for key,value in dict.iteritems():
+                if key== field:
+                    values.append(value)
 
-def validate_data(data_dict):
-    fields = data_dict.get('fields', None)
-    id_exist=id_field_exists(fields)
+        primary_key_candidates[field]=values
 
-    if not id_exist:
-        raise InvalidDataError(
-            toolkit._("The data has no 'id' field!"))
+    for key in primary_key_candidates:
+        if len(primary_key_candidates.get(key, None)) <= len(set(primary_key_candidates.get(key, None))):
+            return key
 
-    if not is_id_field_number(data_dict.get('records',None)):
-        raise InvalidDataError(
-            toolkit._("'id' field accepts only numeric records!"))
-
-
-
+    return None
 
 
 
@@ -196,55 +188,60 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
             if not data_dict.get('records'):
                 return
 
-            validate_data(data_dict)
+            primary_key=find_primary_key(data_dict.get('records'))
+            if primary_key is None:
+                raise InvalidDataError(
+                    toolkit._("The data has no unique field!"))
 
-            detect_and_delete_toDeleted_rows(data_dict, connection,data_dict['records'])
+            detect_and_delete_toDeleted_rows(data_dict, connection, data_dict['records'],primary_key)
 
-            data_dict['method']='upsert'
-            data_dict['primary_key']='id'
-            data_dict['records']=detect_updated_rows(data_dict,connection,data_dict['records'])
-            return super(VersionedDatastorePostgresqlBackend, self).upsert(context,data_dict)
+            data_dict['method'] = 'upsert'
+            data_dict['primary_key'] = primary_key
+            data_dict['records'] = detect_updated_rows(data_dict, connection, data_dict['records'],primary_key)
 
-
+            return super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
         else:
-            validate_data(data_dict)
-            fields=data_dict.get('fields',None)
+            fields = data_dict.get('fields', None)
+            records = data_dict.get('records', None)
+            primary_key=find_primary_key(records)
 
-            records=data_dict.get('records',None)
+            if primary_key is None:
+                    raise InvalidDataError(
+                        toolkit._("The data has no unique field!"))
+
             fields.append(
                 {
                     "id": "sys_period",
                     "type": "tstzrange"
                 }
             )
-
             if records is not None:
                 for r in records:
-                    r['sys_period']=DateTimeTZRange(datetime.now(),None)
+                    r['sys_period'] = DateTimeTZRange(datetime.now(), None)
 
-            data_dict['primary_key'] = 'id'
-            data_dict['fields']=fields
-            data_dict['records']=records
+            data_dict['primary_key'] = primary_key
+            data_dict['fields'] = fields
+            data_dict['records'] = records
             datastore_fields = [
                 {'id': '_id', 'type': 'integer'},
                 {'id': '_full_text', 'type': 'tsvector'},
             ]
-            extra_field=[
+            extra_field = [
                 {
                     "id": "op_type",
                     "type": "text"
                 }
             ]
-            fields_of_history_table=datastore_fields + list(fields) + extra_field
-            history_data_dict={
-                "fields":fields_of_history_table,
-                "resource_id":data_dict['resource_id']+'_history'
+            fields_of_history_table = datastore_fields + list(fields) + extra_field
+            history_data_dict = {
+                "fields": fields_of_history_table,
+                "resource_id": data_dict['resource_id'] + '_history'
             }
-            create_history_table(history_data_dict,self.engine)
-            result=super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
-            create_versioning_trigger(data_dict,connection)
-            create_op_type_trigger(identifier(data_dict['resource_id']),identifier(data_dict['resource_id']+'_history'),connection)
-
+            create_history_table(history_data_dict, self.engine)
+            result = super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
+            create_versioning_trigger(data_dict, connection)
+            create_op_type_trigger(identifier(data_dict['resource_id']),
+                                   identifier(data_dict['resource_id'] + '_history'), connection)
             connection.close()
             return result
 
