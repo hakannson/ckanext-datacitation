@@ -1,4 +1,4 @@
-from ckanext.datastore.backend.postgres import DatastorePostgresqlBackend,identifier, get_write_engine,_get_fields,_pluck,_get_fields_types,validate
+from ckanext.datastore.backend.postgres import DatastorePostgresqlBackend,identifier, get_write_engine,_get_fields_types,validate
 import logging
 from ckanext.datacitation.converter import hash_query_result,hash_query,convert_to_sql_query
 from ckanext.datacitation.query_store import QueryStore
@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 
 QUERY_STORE = QueryStore()
 
+CONTAINS_UNIQUE_FIELD=True
 
 def create_op_type_trigger(table, table_history,connection):
     connection.execute(
@@ -72,17 +73,17 @@ def postgres_querystore_resolve(query):
             history_query = (query.query.replace(query.resource_id, query.resource_id + '_history')).replace('WHERE',
                                                                                                              where)
             select = u'''{query}
-                           UNION {history_query}'''.format(query=query.query.replace('WHERE', where),
+                           UNION {history_query} ORDER BY _id'''.format(query=query.query.replace('WHERE', where),
                                                            history_query=history_query)
         else:
             where = u'''WHERE (lower(sys_period) <='{exec_timestamp}') AND (('{exec_timestamp}' < upper(sys_period)) OR upper(sys_period) IS NULL)'''.format(
                 exec_timestamp=query.exec_timestamp)
             history_query = (query.query.replace(query.resource_id, query.resource_id + '_history')) + ' ' + where
-            select = u'''{query}
-                                           UNION {history_query}'''.format(query=query.query + ' ' + where,
+            select = u'''{query} UNION {history_query} ORDER BY _id'''.format(query=query.query + ' ' + where,
                                                                            history_query=history_query)
 
         result = connection.execute(select)
+
         return result
     else:
         return None
@@ -114,9 +115,14 @@ def detect_and_delete_toDeleted_rows(data_dict, connection,new_record,primary_ke
         new_ids.append(id)
 
     rows_to_delete=list(set(old_ids) - set(new_ids))
+
+    new_record_after_delete = [dict for dict in new_record if dict.get(primary_key,None) not in rows_to_delete]
+
     for id in rows_to_delete:
         delete_sql=u'''DELETE FROM {table} WHERE {primary_key}={id}'''.format(table=identifier(data_dict['resource_id']),primary_key=identifier(primary_key),id=id)
         connection.execute(delete_sql)
+
+    return new_record_after_delete
 
 def detect_updated_rows(data_dict,connection,new_record,primary_key):
     select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
@@ -134,7 +140,9 @@ def detect_updated_rows(data_dict,connection,new_record,primary_key):
         new_record_unicoded.append(dict)
 
 
+
     updated_records=[]
+    unchanged_records=[]
     for old_dict in old_record:
         for new_dict in new_record_unicoded:
             new_dict = collections.OrderedDict(sorted(new_dict.items()))
@@ -143,7 +151,15 @@ def detect_updated_rows(data_dict,connection,new_record,primary_key):
                 if new_dict.values() !=old_dict.values():
                     updated_records.append(new_dict)
 
-    return updated_records
+                unchanged_records.append(int(new_dict.get(primary_key,None)))
+                
+    insert_data=[]
+    for dict in new_record:
+        if dict.get(primary_key,None) not in unchanged_records:
+            insert_data.append(dict)
+
+
+    return insert_data,updated_records
 
 
 
@@ -184,69 +200,69 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
 
     def create(self, context, data_dict):
         connection = self.engine.connect()
-        if super(VersionedDatastorePostgresqlBackend, self).resource_exists(data_dict['resource_id']):
-            if not data_dict.get('records'):
-                return
-
-            primary_key=find_primary_key(data_dict.get('records'))
-            if primary_key is None:
-                raise InvalidDataError(
-                    toolkit._("The data has no unique field!"))
-
-            detect_and_delete_toDeleted_rows(data_dict, connection, data_dict['records'],primary_key)
-
-            data_dict['method'] = 'upsert'
-            data_dict['primary_key'] = primary_key
-            data_dict['records'] = detect_updated_rows(data_dict, connection, data_dict['records'],primary_key)
-
-            return super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
+        global CONTAINS_UNIQUE_FIELD
+        primary_key = find_primary_key(data_dict.get('records'))
+        if primary_key is None:
+            #datacitation extension will not be activated
+            if super(VersionedDatastorePostgresqlBackend, self).resource_exists(data_dict['resource_id']):
+                super(VersionedDatastorePostgresqlBackend, self).delete(context,data_dict)
+            return super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
         else:
-            fields = data_dict.get('fields', None)
-            records = data_dict.get('records', None)
-            primary_key=find_primary_key(records)
+            #datacitation extension will be activated
+            if super(VersionedDatastorePostgresqlBackend, self).resource_exists(data_dict['resource_id']):
+                if not data_dict.get('records'):
+                    return
+                records=data_dict.get('records',None)
+                record_after_delete=detect_and_delete_toDeleted_rows(data_dict, connection, records,primary_key)
 
-            if primary_key is None:
-                    raise InvalidDataError(
-                        toolkit._("The data has no unique field!"))
+                data_dict['method'] = 'update'
+                data_dict['primary_key'] = primary_key
+                insert_data,updated_rows=detect_updated_rows(data_dict, connection, record_after_delete,primary_key)
+                data_dict['records'] = updated_rows
+                super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
+                data_dict['method']='insert'
+                data_dict['records']=insert_data
+                return super(VersionedDatastorePostgresqlBackend, self).upsert(context,data_dict)
+            else:
+                fields = data_dict.get('fields', None)
+                records = data_dict.get('records', None)
+                fields.append(
+                    {
+                        "id": "sys_period",
+                        "type": "tstzrange"
+                    }
+                )
+                if records is not None:
+                    for r in records:
+                        r['sys_period'] = DateTimeTZRange(datetime.now(), None)
 
-            fields.append(
-                {
-                    "id": "sys_period",
-                    "type": "tstzrange"
+                data_dict['primary_key'] = primary_key
+                data_dict['fields'] = fields
+                data_dict['records'] = records
+                datastore_fields = [
+                    {'id': '_id', 'type': 'integer'},
+                    {'id': '_full_text', 'type': 'tsvector'},
+                ]
+                extra_field = [
+                    {
+                        "id": "op_type",
+                        "type": "text"
+                    }
+                ]
+                fields_of_history_table = datastore_fields + list(fields) + extra_field
+                history_data_dict = {
+                    "fields": fields_of_history_table,
+                    "resource_id": data_dict['resource_id'] + '_history'
                 }
-            )
-            if records is not None:
-                for r in records:
-                    r['sys_period'] = DateTimeTZRange(datetime.now(), None)
-
-            data_dict['primary_key'] = primary_key
-            data_dict['fields'] = fields
-            data_dict['records'] = records
-            datastore_fields = [
-                {'id': '_id', 'type': 'integer'},
-                {'id': '_full_text', 'type': 'tsvector'},
-            ]
-            extra_field = [
-                {
-                    "id": "op_type",
-                    "type": "text"
-                }
-            ]
-            fields_of_history_table = datastore_fields + list(fields) + extra_field
-            history_data_dict = {
-                "fields": fields_of_history_table,
-                "resource_id": data_dict['resource_id'] + '_history'
-            }
-            create_history_table(history_data_dict, self.engine)
-            result = super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
-            create_versioning_trigger(data_dict, connection)
-            create_op_type_trigger(identifier(data_dict['resource_id']),
-                                   identifier(data_dict['resource_id'] + '_history'), connection)
-            connection.close()
-            return result
+                create_history_table(history_data_dict, self.engine)
+                result = super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
+                create_versioning_trigger(data_dict, connection)
+                create_op_type_trigger(identifier(data_dict['resource_id']),
+                                       identifier(data_dict['resource_id'] + '_history'), connection)
+                connection.close()
+                return result
 
     def delete(self, context, data_dict):
-        print '========= DELETE method in Action ======='
         return NotImplementedError()
 
 
