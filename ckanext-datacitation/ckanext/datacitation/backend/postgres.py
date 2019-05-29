@@ -17,7 +17,6 @@ log = logging.getLogger(__name__)
 
 QUERY_STORE = QueryStore()
 
-CONTAINS_UNIQUE_FIELD=True
 
 def create_op_type_trigger(table, table_history,connection):
     connection.execute(
@@ -100,6 +99,8 @@ def is_query_needed(query):
 
 
 def detect_and_delete_toDeleted_rows(data_dict, connection,new_record,primary_key):
+    '''This methode returns a tuple. Bool type is to determine if it is create mode
+     or edit mode'''
     select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
     rs = connection.execute(select)
     old_record = refine_results(rs, rs.keys())
@@ -118,11 +119,15 @@ def detect_and_delete_toDeleted_rows(data_dict, connection,new_record,primary_ke
 
     new_record_after_delete = [dict for dict in new_record if dict.get(primary_key,None) not in rows_to_delete]
 
-    for id in rows_to_delete:
-        delete_sql=u'''DELETE FROM {table} WHERE {primary_key}={id}'''.format(table=identifier(data_dict['resource_id']),primary_key=identifier(primary_key),id=id)
-        connection.execute(delete_sql)
+    if len(rows_to_delete) != len(old_ids):
+        for id in rows_to_delete:
+            delete_sql=u'''DELETE FROM {table} WHERE {primary_key}={id}'''.format(table=identifier(data_dict['resource_id']),primary_key=identifier(primary_key),id=id)
+            connection.execute(delete_sql)
 
-    return new_record_after_delete
+        return True,new_record_after_delete
+    else:
+        return False,new_record
+
 
 def detect_updated_rows(data_dict,connection,new_record,primary_key):
     select = u'''SELECT * FROM "{table}"'''.format(table=data_dict['resource_id'])
@@ -152,7 +157,7 @@ def detect_updated_rows(data_dict,connection,new_record,primary_key):
                     updated_records.append(new_dict)
 
                 unchanged_records.append(int(new_dict.get(primary_key,None)))
-                
+
     insert_data=[]
     for dict in new_record:
         if dict.get(primary_key,None) not in unchanged_records:
@@ -199,30 +204,37 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend,object):
         self.engine = get_write_engine()
 
     def create(self, context, data_dict):
+        print 'CONTEXT'
+        print context
         connection = self.engine.connect()
-        global CONTAINS_UNIQUE_FIELD
         primary_key = find_primary_key(data_dict.get('records'))
         if primary_key is None:
-            #datacitation extension will not be activated
+            #datacitation extension will not be activated because there
+            #is no unique field given
             if super(VersionedDatastorePostgresqlBackend, self).resource_exists(data_dict['resource_id']):
                 super(VersionedDatastorePostgresqlBackend, self).delete(context,data_dict)
             return super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
         else:
-            #datacitation extension will be activated
+            #datacitation extension will be activated, unique field is given
             if super(VersionedDatastorePostgresqlBackend, self).resource_exists(data_dict['resource_id']):
                 if not data_dict.get('records'):
                     return
                 records=data_dict.get('records',None)
-                record_after_delete=detect_and_delete_toDeleted_rows(data_dict, connection, records,primary_key)
+                isEditMode,record_after_delete=detect_and_delete_toDeleted_rows(data_dict, connection, records,primary_key)
 
-                data_dict['method'] = 'update'
-                data_dict['primary_key'] = primary_key
-                insert_data,updated_rows=detect_updated_rows(data_dict, connection, record_after_delete,primary_key)
-                data_dict['records'] = updated_rows
-                super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
-                data_dict['method']='insert'
-                data_dict['records']=insert_data
-                return super(VersionedDatastorePostgresqlBackend, self).upsert(context,data_dict)
+                if isEditMode:
+                    #TODO check if the number of columns is equal
+
+                    data_dict['method'] = 'update'
+                    data_dict['primary_key'] = primary_key
+                    insert_data,updated_rows=detect_updated_rows(data_dict, connection, record_after_delete,primary_key)
+                    data_dict['records'] = updated_rows
+                    super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
+                    data_dict['method']='insert'
+                    data_dict['records']=insert_data
+                    return super(VersionedDatastorePostgresqlBackend, self).upsert(context,data_dict)
+                else:
+                    return super(VersionedDatastorePostgresqlBackend, self).create(context,data_dict)
             else:
                 fields = data_dict.get('fields', None)
                 records = data_dict.get('records', None)
