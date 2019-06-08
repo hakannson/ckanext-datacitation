@@ -64,8 +64,15 @@ class QueryStoreController(BaseController):
         id = h.get_param_int('id')
         result = get_action('querystore_resolve')(None, {'pid': id})
 
-        if result:
-            return render('versioneddatastore/query_view.html', extra_vars={'query': result['query'],
+        print '===RESULT=='
+        print str(type(result))
+
+
+        if result is not None:
+            if len(result) == 0:
+                abort(404, 'The table corresponding to the PID does not exist')
+            else:
+                return render('versioneddatastore/query_view.html', extra_vars={'query': result['query'],
                                                                     'result_set': result['result_set'],
                                                                     'count': len(result['result_set']),
                                                                     'projection': result['column_names'],
