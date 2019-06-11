@@ -19,5 +19,4 @@ class PluginTest(unittest.TestCase):
 
     def test_register_backends(self):
         return_val = self.plugin.register_backends()
-        print(return_val)
         self.assertIsNotNone(return_val['postgresql'])'''

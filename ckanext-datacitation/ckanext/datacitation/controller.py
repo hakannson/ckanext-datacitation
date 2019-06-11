@@ -64,9 +64,6 @@ class QueryStoreController(BaseController):
         id = h.get_param_int('id')
         result = get_action('querystore_resolve')(None, {'pid': id})
 
-        print '===RESULT=='
-        print str(type(result))
-
 
         if result is not None:
             if len(result) == 0:
