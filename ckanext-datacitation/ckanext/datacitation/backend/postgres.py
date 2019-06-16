@@ -155,9 +155,6 @@ def detect_deleted_rows(data_dict, connection, new_record, primary_key):
     rs = connection.execute(select)
     max_id_in_database = rs.first()[0]
 
-    print 'MAX_ID_IN_DATABASE'
-    print max_id_in_database
-
     if new_ids[0] > max_id_in_database:
         # create mode therefore nothing do detect
         reset_min_max_id()
@@ -172,25 +169,15 @@ def detect_deleted_rows(data_dict, connection, new_record, primary_key):
         if current_entry_properties.min_id > current_entry_properties.max_id:
             current_entry_properties.min_id = current_entry_properties.max_id - 250
 
-        print 'MIN_ID'
-        print current_entry_properties.min_id
-
-        print 'MAX_ID'
-        print current_entry_properties.max_id
-
         select = u'''SELECT * FROM {table} WHERE {primary_key} BETWEEN {min} AND {max} ORDER BY {primary_key}'''. \
             format(table=identifier(data_dict['resource_id']), primary_key=identifier(primary_key),
                    min=current_entry_properties.min_id, max=current_entry_properties.max_id)
 
-        print 'SELECT'
-        print select
         rs = connection.execute(select)
         old_record = refine_results(rs, rs.keys())
 
         old_ids = [int(dict.get(primary_key, None)) for dict in old_record]
 
-        print 'OLD_IDS'
-        print old_ids
         # this to set the offset for the next chunk of data
         current_entry_properties.min_id = current_entry_properties.max_id + 1
 
@@ -199,8 +186,7 @@ def detect_deleted_rows(data_dict, connection, new_record, primary_key):
 
         rows_to_delete = list(set(old_ids) - set(new_ids))
 
-        print 'ROWS_TO_DELETE'
-        print rows_to_delete
+
         if not rows_to_delete:
             detect_dict['new_record'] = new_record
             return detect_dict
@@ -220,12 +206,10 @@ def reset_min_max_id():
 
 
 def find_min_and_max_id(new_ids, primary_key, resource_id, connection):
-    '''This is a manually pagination to detect the changes.
-    CKAN push datas in chunks with the size 250. If something
-    gets changed the offset (min_id) gets shifted. Therefore we
-    need a mechanism to find the start id for the comparison with
-    the new data'''
-
+    '''We have to compare exactly the same block of data
+    from database as well as from new record.
+    e.g. chunk 2 has entries between 501-750. Therefore we have to query the entries
+    in the database between 501-750. Otherwise detection would not be exact'''
     if current_entry_properties.min_id is None or new_ids[0] < current_entry_properties.min_id:
         select = u'''SELECT MIN({primary_key}) FROM {table}'''. \
             format(table=identifier(resource_id), primary_key=identifier(primary_key))
@@ -279,7 +263,6 @@ def detect_inserted_rows(new_record, old_ids, primary_key):
 
 
 def find_primary_key(records):
-    print '===CARE GELMEZ AGLAMAKTAN==='
     numeric_fiels = []
     for dict in records:
         for key, value in dict.iteritems():
@@ -345,6 +328,7 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend, object):
         '''
         t0 = time.time()
         global total
+
         records = data_dict.get('records', None)
 
         current_entry_properties.primary_key = find_primary_key(records)
@@ -359,30 +343,15 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend, object):
                 # Therefore if the table exists it does not automatically
                 # indicate that it is an update. There is another manual check
                 # to distinguish between UPDATE and CREATE.
-                # If would be better, if it is determined by EventListeners
+                # If would be better, if it is determined at UI level
 
                 if not records:
-                    t1 = time.time()
-                    delta = t1 - t0
-                    print 'DELTA'
-                    print delta
-                    total = total + delta
-                    print '==TOTAL=='
-                    print total
                     return
 
                 detect_dict = detect_deleted_rows(data_dict, self.connection, records,
                                                   current_entry_properties.primary_key)
 
                 if detect_dict.get('mode', None) == 'create':
-                    print '===BALLER_LOS==='
-                    t1 = time.time()
-                    delta = t1 - t0
-                    print 'DELTA'
-                    print delta
-                    total = total + delta
-                    print '==TOTAL=='
-                    print total
                     return super(VersionedDatastorePostgresqlBackend, self).create(context, data_dict)
 
                 old_record = detect_dict['old_record']
@@ -403,21 +372,12 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend, object):
 
                 data_dict['records'] = updated_rows
 
-                print 'UPDATE_ROWS'
-                print updated_rows
 
                 super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
 
                 data_dict['method'] = 'insert'
                 data_dict['records'] = insert_data
 
-                t1 = time.time()
-                delta = t1 - t0
-                print 'DELTA'
-                print delta
-                total = total + delta
-                print '==TOTAL=='
-                print total
                 return super(VersionedDatastorePostgresqlBackend, self).upsert(context, data_dict)
             else:
                 fields = data_dict.get('fields', None)
@@ -456,13 +416,6 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend, object):
                 create_op_type_trigger(identifier(data_dict['resource_id']),
                                        identifier(data_dict['resource_id'] + '_history'), self.connection)
 
-                t1 = time.time()
-                delta = t1 - t0
-                print 'DELTA'
-                print delta
-                total = total + delta
-                print '==TOTAL=='
-                print total
                 return result
 
     def delete(self, context, data_dict):
