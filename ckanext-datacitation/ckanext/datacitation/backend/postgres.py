@@ -22,7 +22,6 @@ log = logging.getLogger(__name__)
 
 QUERY_STORE = QueryStore()
 
-total = 0
 
 
 class CurrentEntryProperties(object):
@@ -326,8 +325,6 @@ class VersionedDatastorePostgresqlBackend(DatastorePostgresqlBackend, object):
         u'''datacitation extension will only be activated if the dataset has
         an unique field otherwise it will proceed according to CKAN standard
         '''
-        t0 = time.time()
-        global total
 
         records = data_dict.get('records', None)
 
